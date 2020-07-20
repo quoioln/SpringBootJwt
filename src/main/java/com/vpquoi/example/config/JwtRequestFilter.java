@@ -1,12 +1,13 @@
 package com.vpquoi.example.config;
 
+import com.vpquoi.example.constant.Constant;
 import com.vpquoi.example.service.JwtUserDetailsService;
+import com.vpquoi.example.service.RedisClientService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,6 +27,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    @Autowired
+    private RedisClientService redisClientService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
@@ -35,21 +39,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer")) {
             jwtToken = requestTokenHeader.replace("Bearer ", "");
-
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                logger.warn("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                logger.warn("JWT Token has expired");
+            if (redisClientService.sismember(Constant.REDIS_SET_ACTIVE_SUBJECTS, jwtToken)) {
+                try {
+                    username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+                } catch (IllegalArgumentException e) {
+                    logger.warn("Unable to get JWT Token");
+                } catch (ExpiredJwtException e) {
+                    logger.warn("JWT Token has expired");
+                }
+            } else {
+                logger.warn("JWT Token has been deleted.");
             }
-        } else {
-            logger.warn("JWT Token does not begin with Bearer String");
         }
 
         // Once we get the token validate it.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetailsService userDetailsService;
             UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
 
             // If token is valid configure Spring Security to manually set authentication

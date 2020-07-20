@@ -1,8 +1,10 @@
 package com.vpquoi.example.config;
 
+import com.vpquoi.example.constant.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -56,7 +58,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // We don't need CSRF for this example
         http.csrf().disable()
                 // Don't authenticate this particular request
-                .authorizeRequests().antMatchers("/authenticate").permitAll()
+                // Allow login API for all.
+                .authorizeRequests().antMatchers(HttpMethod.POST, Constant.EndPoint.Auth.TOKEN).permitAll()
+                // Allow refresh token API for all.
+                .antMatchers(HttpMethod.GET, Constant.EndPoint.Auth.TOKEN).permitAll()
                 // all other requests need to be authenticated
                 .anyRequest().authenticated().and()
                 // Make sure we use stateless session; session won't be used to
