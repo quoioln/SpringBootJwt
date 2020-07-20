@@ -47,10 +47,15 @@ public class JwtAuthenticationController {
 
     @GetMapping
     public ResponseEntity<?> refreshToken(@RequestHeader("Authorization") final String requestTokenHeader) throws Exception {
-        Claims claims = null;
+        String username = null;
         String jwtToken = requestTokenHeader.replace("Bearer ", "");
+        boolean existedToken = redisClientService.sismember(Constant.REDIS_SET_ACTIVE_SUBJECTS, jwtToken);
+        if (!existedToken) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         try {
-            claims = authService.getClaimsFromToken(requestTokenHeader);
+            Claims claims = authService.getClaimsFromToken(requestTokenHeader);
+            username = claims.getSubject();
         } catch (ExpiredJwtException e) {
             Claims expiredClaims = e.getClaims();
             long issueJwtDate = expiredClaims.getExpiration().getTime();
@@ -59,8 +64,9 @@ public class JwtAuthenticationController {
             if (now > expriedJwt) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token has been expired.");
             }
+            username = expiredClaims.getSubject();
         }
-        String username = claims.getSubject();
+        authService.deleteToken(requestTokenHeader);
         String token = authService.generateToken(username);
         return ResponseEntity.ok(new JwtResponse(token));
     }
