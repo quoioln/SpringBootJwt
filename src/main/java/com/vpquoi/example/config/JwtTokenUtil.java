@@ -1,10 +1,13 @@
 package com.vpquoi.example.config;
 
 import com.vpquoi.example.constant.Constant;
+import com.vpquoi.example.model.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenUtil implements Serializable {
@@ -48,8 +52,11 @@ public class JwtTokenUtil implements Serializable {
 
     // Generate token for user.
     public String generateToken(UserDetails userDetails) {
+        CustomUserDetails details = (CustomUserDetails) userDetails;
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userDetails.getUsername());
+        claims.put(Constant.AUTHORITIES_KEY, details.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+        claims.put(Constant.EMAIL, details.getEmail());
+        return doGenerateToken(claims, details.getUsername());
     }
 
     // While creating the token -

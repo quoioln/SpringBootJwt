@@ -15,4 +15,9 @@ public class Constant {
     public static final long JWT_ACCESS_TOKEN_VALIDITY = 1 * 10 * 60;
     // Refresh token valid for 60 minutes.
     public static final long JWT_REFRESH_TOKEN_VALIDITY = 1 * 60 * 60;
+
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String AUTHORITIES_KEY = "authorities";
+    public static final String EMAIL = "email";
+
 }
