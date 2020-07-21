@@ -33,11 +33,14 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(name = "USER_ROLES",
-            joinColumns = { @JoinColumn(name = "USER_ID")},
-            inverseJoinColumns = { @JoinColumn(name = "ROLE_ID")} )
+            joinColumns = {@JoinColumn(name = "USER_ID")},
+            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
     private Set<Role> roles;
+
+    public User() {
+    }
 
     public UserDetails toUserDetails() {
         List<GrantedAuthority> authorities = this.roles.stream().map(e -> new SimpleGrantedAuthority(e.getName().name())).collect(Collectors.toList());

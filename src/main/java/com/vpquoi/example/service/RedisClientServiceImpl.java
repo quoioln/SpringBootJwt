@@ -3,8 +3,6 @@ package com.vpquoi.example.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 @Service
 public class RedisClientServiceImpl implements RedisClientService {
