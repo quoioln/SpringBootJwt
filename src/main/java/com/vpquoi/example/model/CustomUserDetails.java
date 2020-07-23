@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,6 +16,7 @@ public class CustomUserDetails extends User {
 
   private String email;
 
+  private Date lastUpdatePassword;
 
   public CustomUserDetails(
       String username, String password, Collection<? extends GrantedAuthority> authorities) {
@@ -26,9 +28,11 @@ public class CustomUserDetails extends User {
       String username,
       String password,
       String email,
-      Collection<? extends GrantedAuthority> authorities) {
+      Date lastUpdatePassword,
+              Collection<? extends GrantedAuthority> authorities) {
     super(username, password, authorities);
     this.email = email;
     this.id = id;
+    this.lastUpdatePassword = lastUpdatePassword;
   }
 }

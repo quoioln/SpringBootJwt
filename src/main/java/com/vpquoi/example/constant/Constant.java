@@ -19,4 +19,12 @@ public class Constant {
   public static final String TOKEN_PREFIX = "Bearer ";
   public static final String AUTHORITIES_KEY = "authorities";
   public static final String EMAIL = "email";
+
+  public static final class MessageResponse {
+    public static final String TOKEN_USERNAME = "";
+    public static final String TOKEN_EMAIL = "";
+    public static final String MISMATCH_PASSWORD = "New password and confirmation password are mismatch";
+    public static final String ACTION_DENIED = "Action denied for user";
+    public static final String CHANGE_PASSWORD_SUCCESSFUL = "Change password successfully";
+  }
 }
