@@ -11,14 +11,24 @@ import java.util.Collection;
 @Setter
 public class CustomUserDetails extends User {
 
-    private String email;
+  private long id;
 
-    public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
-    }
+  private String email;
 
-    public CustomUserDetails(String username, String password, String email, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
-        this.email = email;
-    }
+
+  public CustomUserDetails(
+      String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    super(username, password, authorities);
+  }
+
+  public CustomUserDetails(
+      long id,
+      String username,
+      String password,
+      String email,
+      Collection<? extends GrantedAuthority> authorities) {
+    super(username, password, authorities);
+    this.email = email;
+    this.id = id;
+  }
 }

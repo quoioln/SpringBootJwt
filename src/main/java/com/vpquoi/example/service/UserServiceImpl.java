@@ -3,9 +3,9 @@ package com.vpquoi.example.service;
 import com.vpquoi.example.dto.UserDto;
 import com.vpquoi.example.entity.Role;
 import com.vpquoi.example.entity.User;
-import com.vpquoi.example.model.MessageResponse;
+import com.vpquoi.example.model.payload.response.MessageResponse;
 import com.vpquoi.example.model.RoleName;
-import com.vpquoi.example.model.SignupRequest;
+import com.vpquoi.example.model.payload.request.SignupRequest;
 import com.vpquoi.example.repository.RoleRepository;
 import com.vpquoi.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,58 +21,59 @@ import java.util.Set;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Resource
-    private UserRepository userRepository;
+  @Resource private UserRepository userRepository;
 
-    @Resource
-    private RoleRepository roleRepository;
+  @Resource private RoleRepository roleRepository;
 
-    @Autowired
-    private PasswordEncoder encoder;
+  @Autowired private PasswordEncoder encoder;
 
-    @Transactional
-    @Override
-    public ResponseEntity<?> validateSignUp(SignupRequest signupRequest) {
-        if (userRepository.existsByUsername(signupRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
-        }
-
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
-        }
-        return ResponseEntity.ok().build();
+  @Transactional
+  @Override
+  public ResponseEntity<?> validateSignUp(SignupRequest signupRequest) {
+    if (userRepository.existsByUsername(signupRequest.getUsername())) {
+      return ResponseEntity.badRequest()
+          .body(new MessageResponse("Error: Username is already taken!"));
     }
 
-    @Override
-    public UserDto createUser(SignupRequest signUpRequest) {
-        // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
-                encoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getEmail());
+    if (userRepository.existsByEmail(signupRequest.getEmail())) {
+      return ResponseEntity.badRequest()
+          .body(new MessageResponse("Error: Email is already in use!"));
+    }
+    return ResponseEntity.ok().build();
+  }
 
-        Set<RoleName> strRoles = signUpRequest.getRoles();
-        Set<Role> roles = new HashSet<>();
+  @Override
+  public UserDto createUser(SignupRequest signUpRequest) {
+    // Create new user's account
+    User user =
+        new User(
+            signUpRequest.getUsername(),
+            encoder.encode(signUpRequest.getPassword()),
+            signUpRequest.getEmail());
 
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+    Set<RoleName> strRoles = signUpRequest.getRoles();
+    Set<Role> roles = new HashSet<>();
+
+    if (strRoles == null) {
+      Role userRole =
+          roleRepository
+              .findByName(RoleName.ROLE_USER)
+              .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+      roles.add(userRole);
+    } else {
+      strRoles.forEach(
+          e -> {
+            Role role =
+                roleRepository
+                    .findByName(e)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(e -> {
-                Role role = roleRepository.findByName(e)
-                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                roles.add(role);
-
-            });
-        }
-
-        user.setRoles(roles);
-        User createdUser = userRepository.save(user);
-
-        return createdUser.toDto();
+            roles.add(role);
+          });
     }
+
+    user.setRoles(roles);
+    User createdUser = userRepository.save(user);
+
+    return createdUser.toDto();
+  }
 }

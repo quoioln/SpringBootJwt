@@ -12,27 +12,28 @@ import redis.clients.jedis.JedisPoolConfig;
 @Configuration
 public class ApplicationConfig {
 
-    private final Log logger = LogFactory.getLog(getClass());
+  private final Log logger = LogFactory.getLog(getClass());
 
-    @Value("${redis.host}")
-    private String redisHost;
+  @Value("${redis.host}")
+  private String redisHost;
 
-    @Value("${redis.port}")
-    private int redisPort;
+  @Value("${redis.port}")
+  private int redisPort;
 
-    @Value("${redis.timeout}")
-    private int redisTimeout;
+  @Value("${redis.timeout}")
+  private int redisTimeout;
 
-    @Value("${redis.password}")
-    private String redisPassword;
+  @Value("${redis.password}")
+  private String redisPassword;
 
-    @Value("${redis.db_name}")
-    private int redisDbName;
+  @Value("${redis.db_name}")
+  private int redisDbName;
 
-    @Bean
-    public Jedis initializeJedis() {
-        JedisPool jedisPool = new JedisPool(new JedisPoolConfig(), redisHost, redisPort, redisTimeout, redisPassword, redisDbName);
-        return jedisPool.getResource();
-    }
-
+  @Bean
+  public Jedis initializeJedis() {
+    JedisPool jedisPool =
+        new JedisPool(
+            new JedisPoolConfig(), redisHost, redisPort, redisTimeout, redisPassword, redisDbName);
+    return jedisPool.getResource();
+  }
 }

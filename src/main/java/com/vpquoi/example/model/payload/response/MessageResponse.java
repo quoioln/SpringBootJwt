@@ -1,4 +1,4 @@
-package com.vpquoi.example.model;
+package com.vpquoi.example.model.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class MessageResponse {
 
-    private String message;
+  private String message;
 }

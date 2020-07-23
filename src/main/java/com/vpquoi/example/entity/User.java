@@ -19,44 +19,45 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 @Entity
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(unique = true)
-    private String username;
+  @Column(unique = true)
+  private String username;
 
-    @Column
-    @JsonIgnore
-    private String password;
+  @Column @JsonIgnore private String password;
 
-    @Column(unique = true)
-    private String email;
+  @Column(unique = true)
+  private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(name = "USER_ROLES",
-            joinColumns = {@JoinColumn(name = "USER_ID")},
-            inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
-    private Set<Role> roles;
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+  @JoinTable(
+      name = "USER_ROLES",
+      joinColumns = {@JoinColumn(name = "USER_ID")},
+      inverseJoinColumns = {@JoinColumn(name = "ROLE_ID")})
+  private Set<Role> roles;
 
-    public User() {
-    }
+  public User() {}
 
-    public UserDetails toUserDetails() {
-        List<GrantedAuthority> authorities = this.roles.stream().map(e -> new SimpleGrantedAuthority(e.getName().name())).collect(Collectors.toList());
-        return new CustomUserDetails(this.username, this.password, this.email, authorities);
-    }
+  public UserDetails toUserDetails() {
+    List<GrantedAuthority> authorities =
+        this.roles.stream()
+            .map(e -> new SimpleGrantedAuthority(e.getName().name()))
+            .collect(Collectors.toList());
+    return new CustomUserDetails(this.id, this.username, this.password, this.email, authorities);
+  }
 
-    public User(String username, String password, String email) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-    }
+  public User(String username, String password, String email) {
+    this.username = username;
+    this.password = password;
+    this.email = email;
+  }
 
-    public UserDto toDto() {
-        UserDto dto = new UserDto();
-        copyProperties(this, dto, "roles", "password");
-        dto.setRoles(roles.stream().map(Role::getName).collect(Collectors.toSet()));
-        return dto;
-    }
+  public UserDto toDto() {
+    UserDto dto = new UserDto();
+    copyProperties(this, dto, "roles", "password");
+    dto.setRoles(roles.stream().map(Role::getName).collect(Collectors.toSet()));
+    return dto;
+  }
 }

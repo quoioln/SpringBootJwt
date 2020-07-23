@@ -1,21 +1,18 @@
-package com.vpquoi.example.dto;
+package com.vpquoi.example.model.payload.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vpquoi.example.model.RoleName;
 import lombok.Data;
 
 import java.util.Set;
 
 @Data
-public class UserDto {
-
-  private long id;
+public class SignupRequest {
 
   private String username;
 
-  @JsonIgnore private String password;
-
   private String email;
+
+  private String password;
 
   private Set<RoleName> roles;
 }

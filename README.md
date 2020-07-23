@@ -14,3 +14,4 @@ Spring Boot with Jwt sample project
 * [spring-boot-jwt-authentication](https://bezkoder.com/spring-boot-jwt-authentication/)
 * [Jwt-role-based-authorization](https://www.devglan.com/spring-security/jwt-role-based-authorization)
 * [Spring-security-method-security](https://www.baeldung.com/spring-security-method-security)
+* [Spring-el-access.html](https://docs.spring.io/spring-security/site/docs/4.2.x/reference/html/el-access.html)

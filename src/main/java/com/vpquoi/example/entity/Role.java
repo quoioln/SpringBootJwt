@@ -9,14 +9,13 @@ import javax.persistence.*;
 @Entity
 public class Role {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column
-    private RoleName name;
+  @Enumerated(EnumType.STRING)
+  @Column
+  private RoleName name;
 
-    @Column
-    private String description;
+  @Column private String description;
 }

@@ -14,15 +14,16 @@ import java.util.Optional;
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
-    @Resource
-    private UserRepository userRepository;
+  @Resource private UserRepository userRepository;
 
-    @Transactional
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+  @Transactional
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    Optional<User> userOptional = userRepository.findByUsername(username);
+    User user =
+        userOptional.orElseThrow(
+            () -> new UsernameNotFoundException("User not found with username: " + username));
 
-        return user.toUserDetails();
-    }
+    return user.toUserDetails();
+  }
 }
